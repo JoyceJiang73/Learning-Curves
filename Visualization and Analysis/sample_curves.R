@@ -6,7 +6,7 @@
 load('metricsAll.Rd')
 
 datasetName = 'NLP'
-res = fuseSimulations('data/allepochs_nlp/',pattern='*KNN*')
+res = fuseSimulations('data/allEpoch_nlp/',pattern='*KNN*', nepochs = 50, nsims = 20)
 labels = c('anger','fear','joy','love','sadness','surprise') # emotion
 
 res$class = gsub('processing curve sim_.*?_(.*?).csv','\\1',res$fl)
@@ -21,26 +21,29 @@ res[1:5,]
 classes = unique(res$class)
 compares = unique(res$class)
 
-par(mfrow=c(2,2),mar=c(5,5,5,1))
+png("Sim1_Epochs_Combined.png", width=1800, height=1800, res=300)
+
+#par(mfrow=c(2,2),mar=c(5,5,5,1))
+par(mfrow=c(2,2))
 
 tmp_dat = res[res$sim==1&res$epoch==1&res$cl=='anger/fear',]
 plot(tmp_dat$t,tmp_dat$dv,type='o',col='black',ylim=c(0.5,1),pch=16,ylab='KNN classification performance',
-     xlab='Time slice in trial',main='Sim. 1, Epoch 1 (NLP, anger/fear)')
+     xlab='Time slice in trial',main='Sim. 1, Epoch 1 (Sentence, anger/fear)')
 metrics = metricsAll[metricsAll$sim==1&metricsAll$epoch==1&metricsAll$cl=='anger/fear',]
 metrics$end_m_start = metrics$vend-metrics$v0
 text(10,0.55,paste(round(metrics[,c(4,9,6,7)],2),collapse='    '),pos=4)
 
-tmp_dat = res[res$sim==1&res$epoch==20&res$cl=='anger/fear',]
+tmp_dat = res[res$sim==1&res$epoch==50&res$cl=='anger/fear',]
 plot(tmp_dat$t,tmp_dat$dv,type='o',col='black',ylim=c(0.5,1),pch=16,ylab='KNN classification performance',
      xlab='Time slice in trial',main='Sim. 1, Epoch 20 (NLP, anger/fear)')
-metrics = metricsAll[metricsAll$sim==1&metricsAll$epoch==20&metricsAll$cl=='anger/fear',]
+metrics = metricsAll[metricsAll$sim==1&metricsAll$epoch==50&metricsAll$cl=='anger/fear',]
 metrics$end_m_start = metrics$vend-metrics$v0
 text(10,0.55,paste(round(metrics[,c(4,9,6,7)],2),collapse='    '),pos=4)
 
 #### GESTURE
 
 datasetName = 'gesture'
-res = fuseSimulations('data/allepochs_gesture',pattern='*KNN*')
+res = fuseSimulations('data/allEpoch_gesture',pattern='*KNN*', nepochs = 50, nsims = 20)
 labels = c('no gestures','body','head','hand','body-head','head-hand movements') # gesture
 
 res$class = gsub('processing curve sim_.*?_(.*?).csv','\\1',res$fl)
@@ -63,11 +66,15 @@ metrics = metricsAll[metricsAll$sim==1&metricsAll$epoch==1&metricsAll$cl=='no ge
 metrics$end_m_start = metrics$vend-metrics$v0
 text(10,0.55,paste(round(metrics[,c(4,9,6,7)],2),collapse='    '),pos=4)
 
-tmp_dat = res[res$sim==1&res$epoch==20&res$cl=='no gestures/hand',]
+tmp_dat = res[res$sim==1&res$epoch==50&res$cl=='no gestures/hand',]
 plot(tmp_dat$t,tmp_dat$dv,type='o',col='black',ylim=c(0.5,1),pch=16,ylab='KNN classification performance',
      xlab='Time slice in trial',main='Sim. 1, Epoch 20 (gesture, no gestures/hand)')
 metrics = metricsAll[metricsAll$sim==1&metricsAll$epoch==20&metricsAll$cl=='no gestures/hand',]
 metrics$end_m_start = metrics$vend-metrics$v0
 text(10,0.55,paste(round(metrics[,c(4,9,6,7)],2),collapse='    '),pos=4)
+
+# Close the PNG device
+dev.off()
+
 
 
